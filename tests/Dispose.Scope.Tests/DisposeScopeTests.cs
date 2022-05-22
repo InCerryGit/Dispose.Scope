@@ -34,24 +34,24 @@ public class DisposeScopeTests
     [Fact]
     public void Call_RegisterDisposeScope_Do_Not_Do_Anything_When_Object_Is_Null()
     {
-        Class class1 = null;
+        Class? class1 = null;
         using (var scope = DisposeScope.BeginScope())
         {
             class1!.RegisterDisposeScope();
-            Assert.Empty(scope._currentScopeDisposables!);
+            Assert.Empty(scope.CurrentScopeDisposables!);
         }
     }
     
     [Fact]
     public void Call_UnRegisterDisposeScope_Do_Not_Do_Anything_When_Object_Is_Null()
     {
-        Class class1 = null;
+        Class? class1 = null;
         using (var scope = DisposeScope.BeginScope())
         {
             class1!.RegisterDisposeScope();
-            Assert.Empty(scope._currentScopeDisposables!);
+            Assert.Empty(scope.CurrentScopeDisposables!);
             class1!.UnRegisterFormDisposeScope();
-            Assert.Empty(scope._currentScopeDisposables!);
+            Assert.Empty(scope.CurrentScopeDisposables!);
         }
     }
 
@@ -62,10 +62,10 @@ public class DisposeScopeTests
         using (var scope = DisposeScope.BeginScope())
         {
             class1.RegisterDisposeScope();
-            Assert.Single(scope._currentScopeDisposables!);
-            Assert.Equal(scope._currentScopeDisposables![0], class1);
+            Assert.Single(scope.CurrentScopeDisposables!);
+            Assert.Equal(scope.CurrentScopeDisposables![0], class1);
             class1.UnRegisterFormDisposeScope();
-            Assert.Empty(scope._currentScopeDisposables!);
+            Assert.Empty(scope.CurrentScopeDisposables!);
         }
     }
 
@@ -177,8 +177,8 @@ public class DisposeScopeTests
             {
                 obj.RegisterDisposeScope();
             });
-            Assert.Single(scope._currentScopeDisposables!);
-            Assert.Equal(scope._currentScopeDisposables![0], obj);
+            Assert.Single(scope.CurrentScopeDisposables!);
+            Assert.Equal(scope.CurrentScopeDisposables![0], obj);
         }
         Assert.True(obj.IsDisposed);
     }
@@ -194,16 +194,16 @@ public class DisposeScopeTests
             using (var scope1 = DisposeScope.BeginScope())
             {
                 await Task.Run(() => { obj1.RegisterDisposeScope(); });
-                Assert.Null(scope1._currentScopeDisposables);
-                Assert.Equal(2, DisposeScope.Current.Value!._currentScopeDisposables!.Count);
-                Assert.Equal(DisposeScope.Current.Value!._currentScopeDisposables![0], obj);
-                Assert.Equal(DisposeScope.Current.Value!._currentScopeDisposables![1], obj1);
+                Assert.Null(scope1.CurrentScopeDisposables);
+                Assert.Equal(2, DisposeScope.Current.Value!.CurrentScopeDisposables!.Count);
+                Assert.Equal(DisposeScope.Current.Value!.CurrentScopeDisposables![0], obj);
+                Assert.Equal(DisposeScope.Current.Value!.CurrentScopeDisposables![1], obj1);
             }
             Assert.False(obj.IsDisposed);
             Assert.False(obj1.IsDisposed);
-            Assert.Equal(2, DisposeScope.Current.Value!._currentScopeDisposables!.Count);
-            Assert.Equal(DisposeScope.Current.Value!._currentScopeDisposables![0], obj);
-            Assert.Equal(DisposeScope.Current.Value!._currentScopeDisposables![1], obj1);
+            Assert.Equal(2, DisposeScope.Current.Value!.CurrentScopeDisposables!.Count);
+            Assert.Equal(DisposeScope.Current.Value!.CurrentScopeDisposables![0], obj);
+            Assert.Equal(DisposeScope.Current.Value!.CurrentScopeDisposables![1], obj1);
         }
         Assert.True(obj.IsDisposed);
         Assert.True(obj1.IsDisposed);
@@ -220,14 +220,14 @@ public class DisposeScopeTests
             using (var scope1 = DisposeScope.BeginScope(DisposeScopeOption.RequiresNew))
             {
                 await Task.Run(() => { obj1.RegisterDisposeScope(); });
-                Assert.NotNull(scope1._currentScopeDisposables);
-                Assert.Single(DisposeScope.Current.Value!._currentScopeDisposables!);
-                Assert.Equal(DisposeScope.Current.Value!._currentScopeDisposables![0], obj1);
+                Assert.NotNull(scope1.CurrentScopeDisposables);
+                Assert.Single(DisposeScope.Current.Value!.CurrentScopeDisposables!);
+                Assert.Equal(DisposeScope.Current.Value!.CurrentScopeDisposables![0], obj1);
             }
             Assert.False(obj.IsDisposed);
             Assert.True(obj1.IsDisposed);
-            Assert.Single(DisposeScope.Current.Value!._currentScopeDisposables!);
-            Assert.Equal(DisposeScope.Current.Value!._currentScopeDisposables![0], obj);
+            Assert.Single(DisposeScope.Current.Value!.CurrentScopeDisposables!);
+            Assert.Equal(DisposeScope.Current.Value!.CurrentScopeDisposables![0], obj);
         }
         Assert.True(obj.IsDisposed);
         Assert.True(obj1.IsDisposed);

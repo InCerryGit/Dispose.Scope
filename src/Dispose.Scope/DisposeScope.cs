@@ -7,39 +7,20 @@ namespace Dispose.Scope
 {
     public sealed class DisposeScope : IDisposable
     {
+        internal static readonly AsyncLocal<DisposeScope> Current = new AsyncLocal<DisposeScope>();
+        internal readonly DisposeScope Before;
+        internal readonly PooledList<IDisposable> CurrentScopeDisposables;
+        
         /// <summary>
         /// Throw exception when call Register context not have DisposeScope, default is true.
         /// </summary>
         public static bool ThrowExceptionWhenNotHaveDisposeScope { get; set; } = true;
 
-#if DEBUG
-        internal
-#else
-    private
-#endif
-            static readonly AsyncLocal<DisposeScope> Current = new AsyncLocal<DisposeScope>();
-
-#if DEBUG
-        internal
-#else
-    private
-#endif
-            DisposeScopeOption Option { get; }
-
-#if DEBUG
-        internal
-#else
-    private
-#endif
-            readonly DisposeScope _before;
-
-#if DEBUG
-        internal
-#else
-    private
-#endif
-            readonly PooledList<IDisposable> _currentScopeDisposables;
-
+        /// <summary>
+        /// Current DisposeScope Option
+        /// </summary>
+        public DisposeScopeOption Option { get; }
+        
         /// <summary>
         /// Create new DisposeScope.
         /// </summary>
@@ -55,21 +36,21 @@ namespace Dispose.Scope
         public DisposeScope(DisposeScopeOption option, int size)
         {
             Option = option;
-            _before = Current.Value;
+            Before = Current.Value;
             switch (Option)
             {
                 case DisposeScopeOption.Suppress:
                     Current.Value = null;
                     break;
                 case DisposeScopeOption.RequiresNew:
-                    _currentScopeDisposables = new PooledList<IDisposable>(size);
+                    CurrentScopeDisposables = new PooledList<IDisposable>(size);
                     Current.Value = this;
                     break;
                 case DisposeScopeOption.Required:
                 default:
                     if (Current.Value is null)
                     {
-                        _currentScopeDisposables = new PooledList<IDisposable>(size);
+                        CurrentScopeDisposables = new PooledList<IDisposable>(size);
                         Current.Value = this;
                     }
 
@@ -79,12 +60,12 @@ namespace Dispose.Scope
 
         private void AddToScope(IDisposable disposable)
         {
-            _currentScopeDisposables?.Add(disposable);
+            CurrentScopeDisposables?.Add(disposable);
         }
 
         private void RemoveFromScope(IDisposable disposable)
         {
-            _currentScopeDisposables?.Remove(disposable);
+            CurrentScopeDisposables?.Remove(disposable);
         }
 
         /// <summary>
@@ -138,18 +119,18 @@ namespace Dispose.Scope
 
         public void Dispose()
         {
-            if (_currentScopeDisposables != null)
+            if (CurrentScopeDisposables != null)
             {
-                for (var index = 0; index < _currentScopeDisposables.Count; index++)
+                for (var index = 0; index < CurrentScopeDisposables.Count; index++)
                 {
-                    _currentScopeDisposables[index].Dispose();
+                    CurrentScopeDisposables[index].Dispose();
                 }
 
-                _currentScopeDisposables.Clear();
-                _currentScopeDisposables.Dispose();
+                CurrentScopeDisposables.Clear();
+                CurrentScopeDisposables.Dispose();
             }
 
-            Current.Value = _before;
+            Current.Value = Before;
         }
     }
 }

@@ -5,6 +5,12 @@
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageVersion>0.0.1</PackageVersion>
+        <Description>This library is a class library that allows you to easily use scopes to manage instances of objects that implement the `IDisposable` interface. Register the `IDisposable`s that need to be released into the scope, and then automatically release all registered objects at the end of the scope.</Description>
+        <Copyright>MIT</Copyright>
+        <PackageProjectUrl>https://github.com/InCerryGit/Dispose.Scope</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/InCerryGit/Dispose.Scope</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>

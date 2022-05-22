@@ -2,7 +2,15 @@
 `Dispose.Scope`是一个可以让你方便的使用作用域管理实现了`IDisposable`接口的对象实例的类库。将需要释放的`IDisposable`注册到作用域中，然后在作用域结束时自动释放所有注册的对象。
 
 ## 使用方式
-`Dispose.Scope`使用非常简单，只需要几步就能完成上文中提到的功能。
+`Dispose.Scope`使用非常简单，只需要几步就能完成上文中提到的功能。首先安装Nuget包：
+
+[NuGet](https://www.nuget.org/packages/Dispose.Scope/)
+
+```ini
+Install-Package Dispose.Scope
+dotnet add package Dispose.Scope
+paket add Dispose.Scope
+```
 你可以直接使用`Dispose.Scope`的API，本文的所有样例你都可以在`samples`文件夹中找到，比如我们有一个类叫`NeedDispose`代码如下：
 ```csharp
 public class NeedDispose : IDisposable
@@ -192,6 +200,14 @@ PooledList<Record> GetRecordList()
 }
 ```
 ### Asp.Net Core扩展
+安装Nuget包`Dispose.Scope.AspNetCore`.
+[NuGet](https://www.nuget.org/packages/Dispose.Scope.AspNetCore/)
+
+```ini
+Install-Package Dispose.Scope.AspNetCore
+dotnet add package Dispose.Scope.AspNetCore
+paket add Dispose.Scope.AspNetCore
+```
 在Asp.Net Core中，返回给Client端是需要Json序列化的集合类型，这种场景下不太好使用Collections.Pooled，因为你需要在框架序列化结束时释放它，但是你不能方便的修改框架中的代码，如下所示：
 ```csharp
 using Collections.Pooled;
@@ -208,7 +224,8 @@ public class RecordController : Controller
     }
 }
 ```
-现在你可以引用`Dispose.Scope.AspNetCore`类库，然后将它注册为第一个中间件（其实只要在MVP中间件之前就可），然后使用`ToPooledListScope`或者`RegisterDisposeScope`方法；这样在框架的序列化结束时，它会自动释放所有注册的对象。
+现在你可以引用`Dispose.Scope.AspNetCore`包，然后将它注册为第一个中间件（其实只要在MVP中间件之前就可），然后使用`ToPooledListScope`或者`RegisterDisposeScope`方法；这样在框架的序列化结束时，它会自动释放所有注册的对象。
+
 ```csharp
 using Dispose.Scope.AspNetCore;
 
