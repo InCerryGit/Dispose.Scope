@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>BenchmarkPooledScope-20220522-155851</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.13.1, OS=Windows 10.0.22000
+Intel Core i7-8750H CPU 2.20GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
+.NET SDK=6.0.203
+  [Host]     : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
+  DefaultJob : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>              Method</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Ratio</th><th>RatioSD</th><th>Gen 0</th><th>Gen 1</th><th>Gen 2</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>GetSomeClassUsePooledUsing</td><td>169.4 ms</td><td>1.60 ms</td><td>1.50 ms</td><td>0.70</td><td>0.01</td><td>53333.3333</td><td>24333.3333</td><td>-</td><td>305 MB</td>
+</tr><tr><td>GetSomeClassUsePooledScope</td><td>169.6 ms</td><td>1.47 ms</td><td>1.30 ms</td><td>0.70</td><td>0.01</td><td>53000.0000</td><td>24333.3333</td><td>-</td><td>306 MB</td>
+</tr><tr><td>GetSomeClass</td><td>240.9 ms</td><td>1.92 ms</td><td>1.60 ms</td><td>1.00</td><td>0.00</td><td>112333.3333</td><td>58000.0000</td><td>41333.3333</td><td>632 MB</td>
+</tr><tr><td>GetSomeClassUsePooled</td><td>402.2 ms</td><td>7.78 ms</td><td>8.96 ms</td><td>1.68</td><td>0.03</td><td>83000.0000</td><td>83000.0000</td><td>83000.0000</td><td>556 MB</td>
+</tr></tbody></table>
+</body>
+</html>
