@@ -22,11 +22,10 @@ namespace Dispose.Scope.AspNetCore
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            using (_ = DisposeScope.BeginScope(_pooledScopeOptions.Option,
-                       _pooledScopeOptions.DisposeObjListDefaultSize))
-            {
-                await _next(httpContext);
-            }
+            var scope = DisposeScope.BeginScope(_pooledScopeOptions.Option,
+                _pooledScopeOptions.DisposeObjListDefaultSize);
+            httpContext.Response.RegisterForDispose(scope);
+            await _next(httpContext);
         }
     }
 }

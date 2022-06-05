@@ -208,7 +208,7 @@ Install-Package Dispose.Scope.AspNetCore
 dotnet add package Dispose.Scope.AspNetCore
 paket add Dispose.Scope.AspNetCore
 ```
-在Asp.Net Core中，返回给Client端是需要Json序列化的集合类型，这种场景下不太好使用Collections.Pooled，因为你需要在框架序列化结束时释放它，但是你不能方便的修改框架中的代码，如下所示：
+在Asp.Net Core中，返回给Client端是需要Json序列化的集合类型，这种场景下不太好使用`Collections.Pooled`，因为你需要在请求处理结束时释放它，但是你不能方便的修改框架中的代码，如下所示：
 ```csharp
 using Collections.Pooled;
 
@@ -217,14 +217,22 @@ using Collections.Pooled;
 public class RecordController : Controller
 {
     // you can't dispose PooledList<Record>
-    PooledList<Record> GetRecordList()
+    PooledList<Record> GetRecordList(string id)
     {
-        var list = RecordDal.Get().ToPooledList()
-        return list;
+        return RecordDal.Get(id);
+    }
+}
+......
+public class RecordDal
+{
+    public PooledList<Record> Get(string id)
+    {
+        var result = DbContext().Get(r => r.id == id).ToPooledList();
+        return result;
     }
 }
 ```
-现在你可以引用`Dispose.Scope.AspNetCore`包，然后将它注册为第一个中间件（其实只要在MVP中间件之前就可），然后使用`ToPooledListScope`或者`RegisterDisposeScope`方法；这样在框架的序列化结束时，它会自动释放所有注册的对象。
+现在你可以引用`Dispose.Scope.AspNetCore`包，然后将它注册为第一个中间件（其实只要在你使用Pooled类型之前即可），然后使用`ToPooledListScope`或者`RegisterDisposeScope`方法；这样在框架的求处理结束时，它会自动释放所有注册的对象。
 
 ```csharp
 using Dispose.Scope.AspNetCore;
@@ -246,15 +254,23 @@ app.Run();
 [Route("api/[controller]")]
 public class RecordController : Controller
 {
-    PooledList<Record> GetRecordList()
+    PooledList<Record> GetRecordList(string id)
     {
-        // use `ToPooledListScope` to register to dispose scope
-        // will be dispose automatically when the scope is disposed
-        var list = RecordDal.Get().ToPooledListScope()
-        return list;
+        return RecordDal.Get(id);
     }
 }
 
+......
+public class RecordDal
+{
+    public PooledList<Record> Get(string id)
+    {
+        // use `ToPooledListScope` to register to dispose scope
+        // will be dispose automatically when the scope is disposed
+        var result = DbContext().Get(r => r.id == id).ToPooledListScope();
+        return result;
+    }
+}
 ```
 ## 注意
 在使用`Dispose.Scope`需要注意一个场景，那就是在作用域内有跨线程操作时，比如下面的例子：
