@@ -241,9 +241,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 var app = builder.Build();
-// register UsePooledScopeMiddleware
+// register UseDisposeScopeMiddleware
 // it will be create a scope when http request begin, and dispose it when http request end
-app.UsePooledScope();
+app.UseDisposeScope();
 app.MapGet("/", () => "Hello World!");
 app.MapControllers();
 app.Run();

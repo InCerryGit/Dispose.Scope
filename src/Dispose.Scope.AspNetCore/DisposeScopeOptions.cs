@@ -1,6 +1,6 @@
 ﻿namespace Dispose.Scope.AspNetCore
 {
-    public class PooledScopeOptions
+    public class DisposeScopeOptions
     {
         public DisposeScopeOption Option { get; set; } = DisposeScopeOption.Required;
 

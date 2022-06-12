@@ -80,7 +80,7 @@ namespace Dispose.Scope
             {
                 if (ThrowExceptionWhenNotHaveDisposeScope)
                 {
-                    throw new InvalidOperationException("Can not use Register on not DisposeScope context");
+                    throw new InvalidOperationException("Can not use Register in not DisposeScope context");
                 }
 
                 return;
@@ -101,7 +101,7 @@ namespace Dispose.Scope
             {
                 if (ThrowExceptionWhenNotHaveDisposeScope)
                 {
-                    throw new InvalidOperationException("Can not use UnRegister on not DisposeScope context");
+                    throw new InvalidOperationException("Can not use UnRegister in not DisposeScope context");
                 }
 
                 return;

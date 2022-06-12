@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Dispose.Scope.AspNetCore
 {
-    public static class PooledScopeApplicationBuilderExtensions
+    public static class DisposeScopeApplicationBuilderExtensions
     {
         /// <summary>
         /// Add the PooledScope middleware to the pipeline.
@@ -12,10 +12,10 @@ namespace Dispose.Scope.AspNetCore
         /// <param name="app">see <see cref="IApplicationBuilder"/></param>
         /// <returns>see <see cref="IApplicationBuilder"/></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IApplicationBuilder UsePooledScope(this IApplicationBuilder app)
+        public static IApplicationBuilder UseDisposeScope(this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
-            UsePooledScopeCore(app, Array.Empty<object>());
+            UseDisposeScopeCore(app, Array.Empty<object>());
             return app;
         }
 
@@ -23,13 +23,13 @@ namespace Dispose.Scope.AspNetCore
         /// Add the PooledScope middleware to the pipeline.
         /// </summary>
         /// <param name="app">see <see cref="IApplicationBuilder"/></param>
-        /// <param name="options">The middleware options.see <see cref="PooledScopeOptions"/></param>
+        /// <param name="options">The middleware options.see <see cref="DisposeScopeOptions"/></param>
         /// <returns>see <see cref="IApplicationBuilder"/></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IApplicationBuilder UsePooledScope(this IApplicationBuilder app, PooledScopeOptions options)
+        public static IApplicationBuilder UseDisposeScope(this IApplicationBuilder app, DisposeScopeOptions options)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
-            UsePooledScopeCore(app, new object[] {options});
+            UseDisposeScopeCore(app, new object[] {options});
             return app;
         }
 
@@ -37,16 +37,16 @@ namespace Dispose.Scope.AspNetCore
         /// Add the PooledScope middleware to the pipeline.
         /// </summary>
         /// <param name="app">see <see cref="IApplicationBuilder"/></param>
-        /// <param name="action"> configure the middleware.see <see cref="PooledScopeOptions"/></param>
+        /// <param name="action"> configure the middleware.see <see cref="DisposeScopeOptions"/></param>
         /// <returns>see <see cref="IApplicationBuilder"/></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IApplicationBuilder UsePooledScope(this IApplicationBuilder app,
-            Action<PooledScopeOptions> action)
+        public static IApplicationBuilder UseDisposeScope(this IApplicationBuilder app,
+            Action<DisposeScopeOptions> action)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
-            var options = new PooledScopeOptions();
+            var options = new DisposeScopeOptions();
             action?.Invoke(options);
-            return UsePooledScopeCore(app, new object[] {Options.Create(options)});
+            return UseDisposeScopeCore(app, new object[] {Options.Create(options)});
         }
 
         /// <summary>
@@ -55,9 +55,9 @@ namespace Dispose.Scope.AspNetCore
         /// <param name="app">see <see cref="IApplicationBuilder"/></param>
         /// <param name="args">The arguments to pass to the middleware type instance's constructor.</param>
         /// <returns>see <see cref="IApplicationBuilder"/></returns>
-        private static IApplicationBuilder UsePooledScopeCore(IApplicationBuilder app, object[] args)
+        private static IApplicationBuilder UseDisposeScopeCore(IApplicationBuilder app, object[] args)
         {
-            return app.UseMiddleware<PooledScopeMiddleware>(args);
+            return app.UseMiddleware<DisposeScopeMiddleware>(args);
         }
     }
 }

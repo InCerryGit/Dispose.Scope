@@ -17,7 +17,7 @@ var app = builder.Build();
 
 if (Environment.GetEnvironmentVariable("Use_Pooled") == "1")
 {
-    app.UsePooledScope(options =>
+    app.UseDisposeScope(options =>
     {
         options.DisposeObjListDefaultSize = 16;
     });
