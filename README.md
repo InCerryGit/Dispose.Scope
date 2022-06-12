@@ -199,6 +199,22 @@ PooledList<Record> GetRecordList()
     return list;
 }
 ```
+#### 性能
+``` ini
+BenchmarkDotNet=v0.13.1, OS=Windows 10.0.22000
+Intel Core i7-8750H CPU 2.20GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
+.NET SDK=6.0.203
+  [Host]     : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
+  DefaultJob : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
+```
+|                     Method |     Mean |   Error |  StdDev | Ratio | RatioSD |       Gen 0 |      Gen 1 |      Gen 2 | Allocated |
+|--------------------------- |---------:|--------:|--------:|------:|--------:|------------:|-----------:|-----------:|----------:|
+| GetSomeClassUsePooledUsing | 169.4 ms | 1.60 ms | 1.50 ms |  0.70 |    0.01 |  53333.3333 | 24333.3333 |          - |    305 MB |
+| GetSomeClassUsePooledScope | 169.6 ms | 1.47 ms | 1.30 ms |  0.70 |    0.01 |  53000.0000 | 24333.3333 |          - |    306 MB |
+|               GetSomeClass | 240.9 ms | 1.92 ms | 1.60 ms |  1.00 |    0.00 | 112333.3333 | 58000.0000 | 41333.3333 |    632 MB |
+|      GetSomeClassUsePooled | 402.2 ms | 7.78 ms | 8.96 ms |  1.68 |    0.03 |  83000.0000 | 83000.0000 | 83000.0000 |    556 MB |
+
+表格中`GetSomeClassUsePooledScope`就是使用`Dispose.Scope`的性能，可以看到它基本和手动`using`一样，稍微有一点额外的开销就是需要创建`DisposeScope`对象。
 ### Asp.Net Core扩展
 安装Nuget包`Dispose.Scope.AspNetCore`.
 [NuGet](https://www.nuget.org/packages/Dispose.Scope.AspNetCore/)
@@ -272,6 +288,20 @@ public class RecordDal
     }
 }
 ```
+#### 性能
+在ASP.NET Core使用了`DisposeScope`和`PooledList`，也使用普通的`List`作为对照组。使用`https://github.com/InCerryGit/Dispose.Scope/tree/master/benchmarks`代码进行压测，结果如下：
+>**机器配置**
+>Server：1 Core  
+>Client：5 Core
+>由于是使用CPU亲和性进行绑核，存在Client抢占Server的Cpu资源的情况，结论仅供参考。
+
+|项目|总耗时|最小耗时|平均耗时|最大耗时|QPS|P95延时|P99延时|内存占用率|
+|----|----|----|----|----|----|----|----|----|
+|DisposeScope+PooledList|1997|1|9.4|80|5007|19|31|59MB|
+|List|2019|1|9.5|77|4900|19|31|110MB|
+
+通过几次平均取值，使用`Dispose.Scope`结合`PooledList`的场景，内存占用率要低53%，QPS高了2%左右，其它指标基本没有任何性的退步。
+
 ## 注意
 在使用`Dispose.Scope`需要注意一个场景，那就是在作用域内有跨线程操作时，比如下面的例子：
 ```csharp
@@ -309,19 +339,4 @@ using(var scope = DisposeScope.BeginScope())
 
 }
 ```
-## 性能
-``` ini
-BenchmarkDotNet=v0.13.1, OS=Windows 10.0.22000
-Intel Core i7-8750H CPU 2.20GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
-.NET SDK=6.0.203
-  [Host]     : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
-  DefaultJob : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
-```
-|                     Method |     Mean |   Error |  StdDev | Ratio | RatioSD |       Gen 0 |      Gen 1 |      Gen 2 | Allocated |
-|--------------------------- |---------:|--------:|--------:|------:|--------:|------------:|-----------:|-----------:|----------:|
-| GetSomeClassUsePooledUsing | 169.4 ms | 1.60 ms | 1.50 ms |  0.70 |    0.01 |  53333.3333 | 24333.3333 |          - |    305 MB |
-| GetSomeClassUsePooledScope | 169.6 ms | 1.47 ms | 1.30 ms |  0.70 |    0.01 |  53000.0000 | 24333.3333 |          - |    306 MB |
-|               GetSomeClass | 240.9 ms | 1.92 ms | 1.60 ms |  1.00 |    0.00 | 112333.3333 | 58000.0000 | 41333.3333 |    632 MB |
-|      GetSomeClassUsePooled | 402.2 ms | 7.78 ms | 8.96 ms |  1.68 |    0.03 |  83000.0000 | 83000.0000 | 83000.0000 |    556 MB |
 
-表格中`GetSomeClassUsePooledScope`就是使用`Dispose.Scope`的性能，可以看到它基本和手动`using`一样，稍微有一点额外的开销就是需要创建`DisposeScope`对象。
