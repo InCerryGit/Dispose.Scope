@@ -2,11 +2,12 @@
     <strong><a href="README.md">简体中文</a> | <a href="README.en-US.md">English</a></strong>
 </div>
 
-# Dispose.Scope
-`Dispose.Scope`是一个可以让你方便的使用作用域管理实现了`IDisposable`接口的对象实例的类库。将需要释放的`IDisposable`注册到作用域中，然后在作用域结束时自动释放所有注册的对象。
 
-## 使用方式
-`Dispose.Scope`使用非常简单，只需要几步就能完成上文中提到的功能。首先安装Nuget包：
+# Dispose.Scope
+`Dispose.Scope`is a class library that allows you to easily manage instances of objects that implement the `IDisposeable` interface using scopes. register the `IDisposable` instances that need to be released into the scope, and then automatically release all the registered obejcts at the end of the scope.
+
+## Usage
+`Dispose.Scope` very easy to use. First install the NuGet package：
 
 [NuGet](https://www.nuget.org/packages/Dispose.Scope/)
 
@@ -15,7 +16,8 @@ Install-Package Dispose.Scope
 dotnet add package Dispose.Scope
 paket add Dispose.Scope
 ```
-你可以直接使用`Dispose.Scope`的API，本文的所有样例你都可以在`samples`文件夹中找到，比如我们有一个类叫`NeedDispose`代码如下：
+you can use the `Dispose.Scope` API directly, all the samples in this article you can find in the `samples` folder, for example we have a class called `NeedDispose` with the following code.
+
 ```csharp
 public class NeedDispose : IDisposable
 {
@@ -31,7 +33,7 @@ public class NeedDispose : IDisposable
     }
 }
 ```
-然后我们就可以像下面这样使用`DisposeScope`：
+We can then use `DisposeScope` like the following:
 ```csharp
 using Dispose.Scope;
 
@@ -43,7 +45,7 @@ using (var scope = DisposeScope.BeginScope())
 }
 // output: A1 Is Dispose
 ```
-同样，在异步上下文中也可以使用`DisposeScope`：
+Similarly, `DisposeScope` can be used in an asynchronous context:
 ```csharp
 using (var scope = DisposeScope.BeginScope())
 {
@@ -56,7 +58,7 @@ using (var scope = DisposeScope.BeginScope())
 }
 // output: A2 Is Dispose
 ```
-当然我们可以在一个`DisposeScope`的作用域当中，嵌套多个`DisposeScope`，如果上下文中存在`DisposeScope`那么他们会直接使用上下文中的，如果没有那么他们会创建一个新的。
+We can nest multiple `DisposeScope` in the scope of a `DisposeScope`, if there is a `DisposeScope` in the context then it will use the `DisposeScope` in the context, if not then they will create a new.
 ```csharp
 using (_ = DisposeScope.BeginScope())
 {
@@ -77,7 +79,7 @@ using (_ = DisposeScope.BeginScope())
 // D2 is Dispose
 
 ```
-如果你想让嵌套的作用域优先释放，那么作用域调用`BeginScope`方法时需要指定`DisposeScopeOption.RequiresNew`（关于`DisposeScopeOption`选项可以查看下面的的内容），它不管上下文中有没有作用域，都会创建一个新的作用域：
+If you want nested scopes to be released first, then the scope needs to specify `DisposeScopeOption.RequiresNew` when calling the `BeginScope` method (see below for the `DisposeScopeOption` option), which will create a new scope regardless of whether there is a scope in the context or not a new scope:
 ```csharp
 using (_ = DisposeScope.BeginScope())
 {
@@ -97,7 +99,7 @@ using (_ = DisposeScope.BeginScope())
 // D2 Is Dispose
 // D0 Is Dispose
 ```
-如果你不想在嵌套作用域中使用`DisposeScope`，那么可以指定`DisposeScopeOption.Suppress`，它会忽略上下文的`DisposeScope`，但是如果你在没有`DisposeScope`上下文中使用`RegisterDisposeScope`，默认会抛出异常。
+If you don't want to use `DisposeScope` in a nested scope, then you can specify `DisposeScopeOption.Suppress` and it will ignore the context's `DisposeScope`, but if you use ` RegisterDisposeScope`, an exception will be thrown by default: 
 
 ```csharp
 using (_ = DisposeScope.BeginScope())
@@ -121,7 +123,7 @@ using (_ = DisposeScope.BeginScope())
 //    at Program.<Main>$(String[] args) in E:\MyCode\PooledScope\Samples\Sample\Program.cs:line 9
 
 ```
-如果不想让它抛出异常，那么只需要在开始全局设置`DisposeScope.ThrowExceptionWhenNotHaveDisposeScope = false`,在没有`DisposeScope`的上下文中，也不会抛出异常.
+If you don't want it to throw an exception, then just set `DisposeScope.ThrowExceptionWhenNotHaveDisposeScope = false` globally at the beginning, and no exception will be thrown in contexts where there is no `DisposeScope`.
 ```csharp
 // set false, no exceptions will be thrown
 DisposeScope.ThrowExceptionWhenNotHaveDisposeScope = false;
@@ -148,13 +150,13 @@ using (_ = DisposeScope.BeginScope())
 
 | 枚举                             | 描述                                                         |
 | -------------------------------- | ------------------------------------------------------------ |
-| `DisposeScopeOption.Required`    | 作用域内需要 DisposeScope。如果已经存在，它使用环境 DisposeScope。否则，它会在进入作用域之前创建一个新的 DisposeScope。这是默认值。 |
-| `DisposeScopeOption.RequiresNew` | 无论环境中是否有 DisposeScope，始终创建一个新的 DisposeScope |
-| `DisposeScopeOption.Suppress`    | 创建作用域时会抑制环境 DisposeScope 上下文。作用域内的所有操作都是在没有环境 DisposeScope 上下文的情况下完成的。 |
+| `DisposeScopeOption.Required`    | ` DisposeScope` is required in the scope. if it already exists, it uses the environment`DisposeScope`. otherwise, it creates a new `DisposeScope` before entering the scope. this is the default value. |
+| `DisposeScopeOption.RequiresNew` | Always create a new `DisposeScope`                           |
+| `DisposeScopeOption.Suppress`    | The environment DisposeScope context is suppressed when creating a scope. All operations within the scope are done without the environment DisposeScope context. |
 
-### Collections.Pooled扩展
-本项目一开始的初衷就是为了更方面的使用[Collections.Pooled](https://github.com/jtmueller/Collections.Pooled)，它基于官方的`System.Collections.Generic`，实现了基于`System.Buffers.ArrayPool`的集合对象分配。
-基于池的集合对象生成有着非常好的性能和非常低的内存占用。但是您在使用中需要手动为它进行`Dispose`，这在单一的方法中还好，有时您会跨多个方法，写起来会比较麻烦，而且有时会忘记去释放它，失去了使用Pool的意义，如下所示：
+### Collections.Pooled Extension
+The original intent of this project was to make it easier to use [Collections.Pooled](https://github.com/jtmueller/Collections.Pooled)，It is based on the official `System.Collections.Generic` and implements a collection object allocation based on `System.Buffers.ArrayPool`.
+Pool-based collection object creation has very good performance and a very low memory footprint. But you need to do `Dispose` for it manually in use, which is fine in a single method, sometimes you will span multiple methods, which can be troublesome to write, and sometimes you forget to release it and lose the point of using Pool, as follows: 
 
 ```csharp
 using Collections.Pooled;
@@ -176,7 +178,7 @@ PooledList<Record> GetRecordList()
 }
 
 ```
-现在您可以添加`Dispose.Scope`的类库，这样可以在外围设置一个`Scope`，当方法结束时，作用域内注册的对象都会`Dispose`。
+Now you can add the `Dispose.Scope` class library so that you can set a `Scope` in the periphery and when the method ends, the objects registered in the scope will `Dispose`.
 ```csharp
 using Dispose.Scope;
 using Collections.Pooled;
@@ -203,7 +205,7 @@ PooledList<Record> GetRecordList()
     return list;
 }
 ```
-#### 性能
+#### Performance
 ``` ini
 BenchmarkDotNet=v0.13.1, OS=Windows 10.0.22000
 Intel Core i7-8750H CPU 2.20GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
@@ -218,9 +220,10 @@ Intel Core i7-8750H CPU 2.20GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical 
 |               GetSomeClass | 240.9 ms | 1.92 ms | 1.60 ms |  1.00 |    0.00 | 112333.3333 | 58000.0000 | 41333.3333 |    632 MB |
 |      GetSomeClassUsePooled | 402.2 ms | 7.78 ms | 8.96 ms |  1.68 |    0.03 |  83000.0000 | 83000.0000 | 83000.0000 |    556 MB |
 
-表格中`GetSomeClassUsePooledScope`就是使用`Dispose.Scope`的性能，可以看到它基本和手动`using`一样，稍微有一点额外的开销就是需要创建`DisposeScope`对象。
-### Asp.Net Core扩展
-安装Nuget包`Dispose.Scope.AspNetCore`.
+`GetSomeClassUsePooledScope` in the table is the performance of using `Dispose.Scope`, you can see that it is basically the same as manually `using`, with a little extra overhead of needing to create `DisposeScope` objects.
+
+### Asp.Net Core Extension
+Install NuGet Package `Dispose.Scope.AspNetCore`.
 [NuGet](https://www.nuget.org/packages/Dispose.Scope.AspNetCore/)
 
 ```ini
@@ -228,7 +231,7 @@ Install-Package Dispose.Scope.AspNetCore
 dotnet add package Dispose.Scope.AspNetCore
 paket add Dispose.Scope.AspNetCore
 ```
-在Asp.Net Core中，返回给Client端是需要Json序列化的集合类型，这种场景下不太好使用`Collections.Pooled`，因为你需要在请求处理结束时释放它，但是你不能方便的修改框架中的代码，如下所示：
+In Asp.Net Core, the return to the Client side is a collection type that requires Json serialization, this scenario is not very good to use `Collections.Pooled`, because you need to release it at the end of the request processing, but you can not conveniently modify the code in the framework, as follows.
 ```csharp
 using Collections.Pooled;
 
@@ -252,7 +255,7 @@ public class RecordDal
     }
 }
 ```
-现在你可以引用`Dispose.Scope.AspNetCore`包，然后将它注册为第一个中间件（其实只要在你使用Pooled类型之前即可），然后使用`ToPooledListScope`或者`RegisterDisposeScope`方法；这样在框架的求处理结束时，它会自动释放所有注册的对象。
+Now, you can use `Dispose.Scope.AspNetCore` package and register it as the first middleware (actually, just before you use the Pooled type), then use the `ToPooledListScope` or `RegisterDisposeScope` methods; this way, when the framework's request processing ends, it will automatically release all the registered objects.
 
 ```csharp
 using Dispose.Scope.AspNetCore;
@@ -292,22 +295,21 @@ public class RecordDal
     }
 }
 ```
-#### 性能
-在ASP.NET Core使用了`DisposeScope`和`PooledList`，也使用普通的`List`作为对照组。使用`https://github.com/InCerryGit/Dispose.Scope/tree/master/benchmarks`代码进行压测，结果如下：
->**机器配置**
+#### Performance
+In ASP.NET Core `DisposeScope` and `PooledList` were used, also the normal `List` was used as a control group. The results of the crush test using the `https://github.com/InCerryGit/Dispose.Scope/tree/master/benchmarks` code are as follows.
 >Server：1 Core  
 >Client：5 Core
->由于是使用CPU亲和性进行绑核，存在Client抢占Server的Cpu资源的情况，结论仅供参考。
+>Since the CPU affinity is used to tie the nucleus, there is the case of Client grabbing the CPU resources of Server, the conclusion is for reference only.
 
-|项目|总耗时|最小耗时|平均耗时|最大耗时|QPS|P95延时|P99延时|内存占用|
+|Project|Total time (ms)|Min time (ms)|Avg time (ms)|Max time (ms)|QPS|P95 latency|P99 latency|Memory Used|
 |----|----|----|----|----|----|----|----|----|
 |DisposeScope+PooledList|1997|1|9.4|80|5007|19|31|59MB|
 |List|2019|1|9.5|77|4900|19|31|110MB|
 
-通过几次平均取值，使用`Dispose.Scope`结合`PooledList`的场景，内存占用率要低53%，QPS高了2%左右，其它指标基本没有任何性的退步。
+By averaging the values a few times, the scenario using `Dispose.Scope` combined with `PooledList` has a 53% lower memory footprint, about 2% higher QPS, and basically no sexual regression in other metrics.
 
-## 注意
-在使用`Dispose.Scope`需要注意一个场景，那就是在作用域内有跨线程操作时，比如下面的例子：
+## Precautions
+One scenario to be aware of when using `Dispose.Scope` is when there are cross-threaded operations within the scope, such as the following example.
 ```csharp
 using Dispose.Scope;
 
@@ -321,7 +323,7 @@ using(var scope = DisposeScope.BeginScope())
     });
 }
 ```
-上面的代码存在严重的问题，当外层的作用域结束时，可能内部其它线程的任务还未结束，就会导致对象错误的被释放。如果您遇到这样的场景，您应该抑制上下文中的`DisposeScope`，然后在其它线程中重新创建作用域。
+There is a serious problem with the above code, when the outer scope ends, it may cause the object to be released incorrectly before the tasks of other threads inside are finished. If you encounter such a scenario, you should suppress the `DisposeScope` in the context and then recreate the scope in the other thread.
 ```csharp
 using Dispose.Scope;
 
