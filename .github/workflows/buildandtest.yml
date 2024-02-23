@@ -36,8 +36,8 @@ jobs:
 
     - name: Build with dotnet      
       run: |
-        dotnet build --configuration Release /home/runner/work/DisposeScope/DisposeScope/DisposeScope.sln
+        dotnet build --configuration Release /home/runner/work/Dispose.Scope/Dispose.Scope/DisposeScope.sln
    
     - name: Run tests on net8.0
       run: |
-        dotnet test --framework=net8.0 /home/runner/work/DisposeScope/DisposeScope/tests/Dispose.Scope.Tests.csproj
+        dotnet test --framework=net8.0 /home/runner/work/Dispose.Scope/Dispose.Scope/tests/Dispose.Scope.Tests.csproj

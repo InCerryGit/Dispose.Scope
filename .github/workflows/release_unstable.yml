@@ -22,11 +22,11 @@ jobs:
           7.0.x
           8.0.x
     - name: Build with dotnet
-      run: dotnet build --configuration Release /home/runner/work/DisposeScope/DisposeScope/DisposeScope.sln
+      run: dotnet build --configuration Release /home/runner/work/Dispose.Scope/Dispose.Scope/DisposeScope.sln
     - name: Pack with dotnet
       env:
         VERSION: ${{ github.ref_name }}
-      run: dotnet pack /home/runner/work/DisposeScope/DisposeScope/DisposeScope.sln --version-suffix $VERSION -o /home/runner/work/nugetpkgs -c Release --no-build
+      run: dotnet pack /home/runner/work/Dispose.Scope/Dispose.Scope/DisposeScope.sln --version-suffix $VERSION -o /home/runner/work/nugetpkgs -c Release --no-build
     - name: Upload artifact
       uses: actions/upload-artifact@v1
       with:
