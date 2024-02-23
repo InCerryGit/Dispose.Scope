@@ -40,4 +40,4 @@ jobs:
    
     - name: Run tests on net8.0
       run: |
-        dotnet test --framework=net8.0 /home/runner/work/Dispose.Scope/Dispose.Scope/tests/Dispose.Scope.Tests.csproj
+        dotnet test --framework=net8.0 /home/runner/work/Dispose.Scope/Dispose.Scope/tests/Dispose.Scope.Tests/Dispose.Scope.Tests.csproj
