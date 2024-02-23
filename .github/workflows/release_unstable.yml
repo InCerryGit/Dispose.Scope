@@ -19,8 +19,6 @@ jobs:
       with:
         dotnet-version: |
           6.0.x
-          7.0.x
-          8.0.x
     - name: Build with dotnet
       run: dotnet build --configuration Release /home/runner/work/Dispose.Scope/Dispose.Scope/DisposeScope.sln
     - name: Pack with dotnet
