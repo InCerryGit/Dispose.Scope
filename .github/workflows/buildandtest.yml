@@ -22,22 +22,16 @@ jobs:
       with:
         dotnet-version: |
           6.0.x
-          7.0.x
-          8.0.x
 
     - name: Show dotnet Version
       run: |
         dotnet --list-sdks
         dotnet --list-runtimes
 
-    - name: Show docker info
-      run: |
-        docker ps -a
-
     - name: Build with dotnet      
       run: |
         dotnet build --configuration Release /home/runner/work/Dispose.Scope/Dispose.Scope/DisposeScope.sln
    
-    - name: Run tests on net8.0
+    - name: Run tests
       run: |
-        dotnet test --framework=net8.0 /home/runner/work/Dispose.Scope/Dispose.Scope/tests/Dispose.Scope.Tests/Dispose.Scope.Tests.csproj
+        dotnet test /home/runner/work/Dispose.Scope/Dispose.Scope/tests/Dispose.Scope.Tests/Dispose.Scope.Tests.csproj
