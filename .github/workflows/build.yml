@@ -32,4 +32,4 @@ jobs:
    
     - name: Build with dotnet      
       run: |
-        dotnet build --configuration Release  D:\a\DisposeScope\DisposeScope\DisposeScope.sln
+        dotnet build --configuration Release  D:\a\Dispose.Scope\Dispose.Scope\DisposeScope.sln
