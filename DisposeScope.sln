@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dispose.Scope", "src\Dispose.Scope\Dispose.Scope.csproj", "{B976AB15-A442-440D-A5C1-FC19D1DDE964}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Samples\Sample\Sample.csproj", "{0A12AE66-2DA0-4C07-879D-5A09E01E43CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "samples\Sample\Sample.csproj", "{0A12AE66-2DA0-4C07-879D-5A09E01E43CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmark", "benchmarks\Benchmark\Benchmark.csproj", "{58CA15BC-A843-4013-B2F4-9D582F7827FC}"
 EndProject
